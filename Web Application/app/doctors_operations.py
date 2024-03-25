@@ -8,9 +8,9 @@ app = Flask(__name__)
 bcrypt = Bcrypt()
 
 # Connect to MongoDB
-client = MongoClient('mongodb://localhost:27017/')
-db = client['doctor_appointment']
-doctor_collection = db['doctorcollection']
+client = MongoClient('mongodb+srv://MediCare:gADQCGcPBlY9cuU9@medicare.qqhepv5.mongodb.net/')
+db = client['MediCare']
+doctor_collection = db['Doctor']
 
 def create_doctor(new_doctor):
     # new_doctor = request.json
