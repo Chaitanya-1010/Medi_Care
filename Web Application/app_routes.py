@@ -1,4 +1,4 @@
-from flask import request, jsonify, Flask
+from flask import request, jsonify, Flask, send_file
 # from app_routes import app
 # from app.patient_operations import * 
 import app.patient_operations as patient
@@ -8,8 +8,15 @@ from app.login import *
 from flask_cors import CORS
 
 # Define API endpoints
-app=Flask(__name__)
+# app=Flask(__name__)
+app = Flask(__name__, static_folder='static')
 CORS(app) 
+
+@app.route('/', methods=['POST'])
+def index():
+    # Implement login logic here
+    return send_file('static/index.html')
+
 # Login
 @app.route('/api/user_login', methods=['POST'])
 def userLogin():
