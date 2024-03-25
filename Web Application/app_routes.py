@@ -12,7 +12,7 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder='static')
 CORS(app) 
 
-@app.route('/', methods=['POST'])
+@app.route('/')
 def index():
     # Implement login logic here
     return send_file('static/index.html')
