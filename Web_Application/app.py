@@ -18,25 +18,25 @@ def index():
     return send_file(r'Backend\static\dist\Medico\index.html')
 
 # Login
-@app.route('/api/user_login', methods=['POST'])
+@app.route('/user_login', methods=['POST'])
 def userLogin():
     # Implement login logic here
     login_user=request.json
     return patient.user_login(login_user)
     pass
 
-@app.route('/api/doctor_login', methods=['POST'])
+@app.route('/doctor_login', methods=['POST'])
 def doctorLogin():
     login_doctor = request.json
     return doctor.doctor_login(login_doctor)
 
-@app.route('/api/doctor_signup', methods=['POST'])
+@app.route('/doctor_signup', methods=['POST'])
 def doctor_signup():
     new_doctor= request.json
     return doctor.create_doctor(new_doctor)
     # pass
 
-@app.route('/api/patient_signup', methods=['POST'])
+@app.route('/patient_signup', methods=['POST'])
 def patient_signup():
     new_user= request.json
     return patient.create_user(new_user)
