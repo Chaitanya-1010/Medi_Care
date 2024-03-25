@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 import jwt
-from app import models
+from application import models
+# from models import doctor_schema as Doctor  # Import your Doctor model
 from pymongo import MongoClient
 app = Flask(__name__)
 bcrypt = Bcrypt()
@@ -10,48 +11,53 @@ bcrypt = Bcrypt()
 client = MongoClient('mongodb+srv://MediCare:gADQCGcPBlY9cuU9@medicare.qqhepv5.mongodb.net/')
 db = client['MediCare']
 doctor_collection = db['Doctor']
-user_collection = db['Patient']
 
-def create_user(new_user):
+def create_doctor(new_doctor):
+    # new_doctor = request.json
 
-
-    user_obj_from_db = user_collection.find_one({"username": new_user["username"]})
-
-    if user_obj_from_db is not None:
-        return jsonify({"message": "Username already exists"}), 400
-
-    # hashed_password = bcrypt.generate_password_hash(new_user["password"]).decode("utf-8")
-    # new_user["password"] = new_user["password"]
-    new_user_id = user_collection.insert_one(new_user).inserted_id
-
-    # Convert ObjectId to string
-    new_user["_id"] = str(new_user_id)
-
-    # new_user_obj = user_collection.insert_one(new_user)
-    # new_user_obj.save()
-
-    return jsonify({"message": "User created", "payload": new_user}), 200
-
-
-def user_login(login_user):
-    # Retrieve login credentials from the request
-    username = login_user.get("username")
-    password = login_user.get("password")
+    # doctor_obj_from_db = models.doctor_schema.objects(username=new_doctor["username"]).first()
+    username = new_doctor.get("username")
+    # password = new_doctor.get("password")
 
     # Find the doctor document by username
-    user_waiting_to_login = user_collection.find_one({"username": username})
+    doctor_obj_from_db = doctor_collection.find_one({"username": username})
+
+
+    if doctor_obj_from_db is not None:
+        return jsonify({"message": "Username already exists"}), 400
+
+    # hashed_password = bcrypt.generate_password_hash(new_doctor["password"]).decode("utf-8")
+    # new_doctor["password"] = hashed_password
+
+    new_doctor_id = doctor_collection.insert_one(new_doctor).inserted_id
+
+    # Convert ObjectId to string
+    new_doctor["_id"] = str(new_doctor_id)
+
+
+    return jsonify({"message": "Doctor created", "payload": new_doctor}), 200
+
+
+def doctor_login(login_doctor):
+    # Retrieve login credentials from the request
+    username = login_doctor.get("username")
+    password = login_doctor.get("password")
+
+    # Find the doctor document by username
+    doctor_waiting_to_login = doctor_collection.find_one({"username": username})
 
     # Check if the doctor is not found
-    if user_waiting_to_login is None:
-        return jsonify({"message": "User not found"}), 404
+    if doctor_waiting_to_login is None:
+        return jsonify({"message": "Doctor not found"}), 404
 
     # Check if the password is invalid
-    if user_waiting_to_login["password"] != password:
+    if doctor_waiting_to_login["password"] != password:
         return jsonify({"message": "Invalid password"}), 401
-    user_waiting_to_login["_id"] = str(user_waiting_to_login["_id"])
+    doctor_waiting_to_login["_id"] = str(doctor_waiting_to_login["_id"])
 
     # If the credentials are valid, return success message
-    return jsonify({"message": "login success", "user": user_waiting_to_login}), 200
+        # res.status(200).send({ message: "login success", token: signedToken, doctor: doctorWaitingToLogin })
+    return jsonify({"message": "login success", "doctor": doctor_waiting_to_login}), 200
 
 def get_doctors():
     # doctors = doctor_collection.find

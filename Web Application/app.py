@@ -1,10 +1,10 @@
 from flask import request, jsonify, Flask, send_file
 # from app_routes import app
 # from app.patient_operations import * 
-import app.patient_operations as patient
-import app.doctors_operations as doctor
+import application.patient_operations as patient
+import application.doctors_operations as doctor
 # from app.doctors_operations import * 
-from app.login import *
+from application.login import *
 from flask_cors import CORS
 
 # Define API endpoints
@@ -68,3 +68,7 @@ def get_appointments():
 def respond_appointment():
     # Implement logic for doctor to respond to appointment requests
     pass
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
