@@ -10,7 +10,7 @@ from flask_cors import CORS
 # Define API endpoints
 # app=Flask(__name__)
 app = Flask(__name__, static_folder='Backend/static', template_folder="Backend/templates")
-CORS(app) 
+# CORS(app) 
 
 @app.route('/')
 def index():
