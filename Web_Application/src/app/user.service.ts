@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+// import { environment } from 'src/environments/environment';
 
 
 @Injectable({
@@ -18,12 +18,12 @@ export class UserService {
   }
   addUserToDatabase(userObj: any) {
     console.log(userObj);
-    return this.httpClientObj.post("/patient_signup", userObj);
+    return this.httpClientObj.post('http://127.0.0.1:5000'+"/patient_signup", userObj);
   }
 
   loginUser(userObj: any): Observable<any> {
    
-    return this.httpClientObj.post("/user_login", userObj);
+    return this.httpClientObj.post('http://127.0.0.1:5000/user_login', userObj);
 
   }
 

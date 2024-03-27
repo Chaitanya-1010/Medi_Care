@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { environment } from 'src/environments/environment';
+// import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +10,10 @@ export class DoctorService {
   loginStatus:boolean= false;
   constructor(private httpClientObj: HttpClient) { }
   loginDoctor(userObj: any): Observable<any> {
-    return this.httpClientObj.post("/doctor_login", userObj);
+    return this.httpClientObj.post('http://127.0.0.1:5000'+"/doctor_login", userObj);
   }
   addDoctorToDatabase(userObj: any): Observable<any> {
-    return this.httpClientObj.post("/doctor_signup", userObj);
+    return this.httpClientObj.post('http://127.0.0.1:5000'+"/doctor_signup", userObj);
   }
 
   //get doctor values based on book appointment button selection
@@ -34,7 +34,7 @@ export class DoctorService {
   }
   // getDoctorList
   getDoctorList(): Observable<any> {
-    return this.httpClientObj.get<any>("/get_doctors")
+    return this.httpClientObj.get<any>('127.0.0.1:5000'+"/get_doctors")
   }
   getDoctorName(){
     return this.logoutdoctorBehaviourSubject;
