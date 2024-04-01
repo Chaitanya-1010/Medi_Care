@@ -9,6 +9,14 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class DoctorService {
   loginStatus:boolean= false;
   constructor(private httpClientObj: HttpClient) { }
+  checkDoctorAvailability(doctorId: string, slot: string): Observable<any> {
+    return this.httpClientObj.post<any>('http://127.0.0.1:5000/check_doctor_availability', { doctorId, slot });
+  }
+
+  // Function to book appointment
+  bookAppointment(appointmentDetails: any): Observable<any> {
+    return this.httpClientObj.post<any>('http://127.0.0.1:5000/book_appointment', appointmentDetails);
+  }
   loginDoctor(userObj: any): Observable<any> {
     return this.httpClientObj.post('http://127.0.0.1:5000'+"/doctor_login", userObj);
   }
@@ -34,7 +42,7 @@ export class DoctorService {
   }
   // getDoctorList
   getDoctorList(): Observable<any> {
-    return this.httpClientObj.get<any>('127.0.0.1:5000'+"/get_doctors")
+    return this.httpClientObj.get<any>('http://127.0.0.1:5000/get_doctors')
   }
   getDoctorName(){
     return this.logoutdoctorBehaviourSubject;

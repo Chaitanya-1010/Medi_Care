@@ -18,7 +18,7 @@ export class UserService {
   }
   addUserToDatabase(userObj: any) {
     console.log(userObj);
-    return this.httpClientObj.post('http://127.0.0.1:5000'+"/patient_signup", userObj);
+    return this.httpClientObj.post('http://127.0.0.1:5000/patient_signup', userObj);
   }
 
   loginUser(userObj: any): Observable<any> {

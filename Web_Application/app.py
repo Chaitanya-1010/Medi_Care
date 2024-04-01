@@ -12,11 +12,6 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder='Backend/static', template_folder="Backend/templates")
 CORS(app) 
 
-@app.route('/')
-def index():
-    # Implement login logic here
-    return render_template("index.html")
-
 # Login
 @app.route('/user_login', methods=['POST'])
 def userLogin():
@@ -43,28 +38,43 @@ def patient_signup():
 
 @app.route('/get_doctors', methods=['GET'])
 def getDoctors():
-    return patient.get_doctors()
+    return doctor.get_doctors()
     # pass
 
 
 # Patient Operations
-@app.route('/api/user_medical-records', methods=['GET'])
+@app.route('/user_medical_records', methods=['GET'])
 def get_medical_records():
     # Implement logic to fetch medical records from MongoDB
     pass
 
-@app.route('/api/book-appointment', methods=['POST'])
+@app.route('/book_appointment', methods=['POST'])
 def book_appointment():
-    # Implement logic to book appointment
-    pass
+    payload = request.json  
+    # Call function to book appointment
+    if doctor.book_appointment(payload):
+        return jsonify({'message': 'Appointment booked successfully'}), 200
+    else:
+        return jsonify({'message': 'Failed to book appointment'}), 500
 
 # Doctor Operations
-@app.route('/api/doctor_appointments', methods=['GET'])
+@app.route('/doctor_appointments', methods=['GET'])
 def get_appointments():
     # Implement logic to fetch appointments for the doctor
     pass
 
-@app.route('/api/doctor_respond-appointment', methods=['POST'])
+@app.route('/check_doctor_availability', methods=['POST'])
+def check_doctor_availability():
+    data = request.json
+    return doctor.check_slot_availability(data)
+
+@app.route('/update_appointment_status',methods=["POST"])
+def update_appointment_status():
+    data=request.json
+    return doctor.update_appointment_status(data)
+
+
+@app.route('/doctor_respond_appointment', methods=['POST'])
 def respond_appointment():
     # Implement logic for doctor to respond to appointment requests
     pass
