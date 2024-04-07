@@ -14,11 +14,12 @@ doctor_collection = db['doctorcollection']
 user_collection = db['usercollection']
 
 conn = mysql.connector.connect(
-    host="database-2.cf6ggqy66qxa.ap-south-1.rds.amazonaws.com",
+    host="database-1.clesk2y2a9ma.us-east-2.rds.amazonaws.com",
     user="admin",
-    password="sameer123",
-    database="medicare"
+    password="admin123",
+    database="MEDICARE"
 )
+
 
 
 def create_user(new_user):

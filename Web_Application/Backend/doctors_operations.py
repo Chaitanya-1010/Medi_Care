@@ -1,3 +1,5 @@
+import boto3
+from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 import jwt
@@ -10,44 +12,17 @@ import mysql.connector
 app = Flask(__name__)
 bcrypt = Bcrypt()
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mssql+pyodbc://RAM:password@localhost/MediCare?driver=ODBC+Driver+17+for+SQL+Server'
-# Initialize SQLAlchemy
-# db = SQLAlchemy(app)
-
-
-# Connect to MongoDB
-client = MongoClient('mongodb://localhost:27017/')
-db = client['doctor_appointment']
-doctor_collection = db['doctorcollection']
-user_collection = db['usercollection']
-
-# mysql_config = {
-#     'host': 'localhost',
-#     'user': 'RAM',
-#     'password': 'password',
-#     'database': 'MediCare'
-# }
+# Initialize a DynamoDB client
+dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
+appointment_history_table = dynamodb.Table('Appointment_History')
 
 # Initialize MySQL connection
 conn = mysql.connector.connect(
-    host="database-2.cf6ggqy66qxa.ap-south-1.rds.amazonaws.com",
+    host="database-1.clesk2y2a9ma.us-east-2.rds.amazonaws.com",
     user="admin",
-    password="sameer123",
-    database="medicare"
+    password="admin123",
+    database="MEDICARE"
 )
-
-
-# def create_doctor(new_doctor):
-#     username = new_doctor.get("username")
-#     # Find the doctor document by username
-#     doctor_obj_from_db = doctor_collection.find_one({"username": username})
-#     if doctor_obj_from_db is not None:
-#         return jsonify({"message": "Username already exists"}), 400
-#     new_doctor_id = doctor_collection.insert_one(new_doctor).inserted_id
-
-#     # Convert ObjectId to string
-#     new_doctor["_id"] = str(new_doctor_id)
-#     return jsonify({"message": "Doctor created", "payload": new_doctor}), 200
 
 
 def create_doctor(new_doctor):
@@ -124,9 +99,10 @@ def get_doctor_by_username(username):
 def check_slot_availability(data):
     doctor_id = data.get('doctor_id')
     date = data.get('date')
-    slot_time = data.get('slot_time')
+    slot_time = data.get('slot')
+    date_time_str = f"{date} {slot_time}"
+    slot_time = datetime.strptime(date_time_str, '%Y-%m-%d %I %p')
     try:
-        # Connect to MySQL database
         con = conn.cursor()
         # Query to check slot availability
         query = """
@@ -155,8 +131,6 @@ def update_appointment_status(data):
     try:
         # Connect to MySQL database
         con = conn.cursor()
-
-        # Query to update appointment status to completed
         query = """
             UPDATE doctor_availability 
             SET status = 'completed' 
@@ -182,11 +156,13 @@ def book_appointment(payload):
     try:
         # Connect to MySQL database
         cursor = conn.cursor()
-
         # Extract data from payload
         patient_id = payload.get('patient_id')
         doctor_id = payload.get('doctor_id')
+        date=payload.get("date")
         appointment_time = payload.get('appointment_time')
+        date_time_str = f"{date} {appointment_time}"
+        appointment_time = datetime.strptime(date_time_str, '%Y-%m-%d %I %p')
 
         # Insert appointment data into appointments table
         query = """
@@ -196,8 +172,26 @@ def book_appointment(payload):
         cursor.execute(query, (patient_id, doctor_id, appointment_time))
         conn.commit()
 
-        return True
+        update_availability_query = """
+            INSERT INTO doctor_availability (doctor_id, date, slot_time, status)
+            VALUES (%s, %s, %s, 'booked')
+            ON DUPLICATE KEY UPDATE status = 'booked';
+        """
+        cursor.execute(update_availability_query, (doctor_id, date, appointment_time))
+        conn.commit()
 
+        appointment_history_table.put_item(
+            Item={
+                'PatientID': patient_id,
+                'AppointmentID': str(datetime.now().timestamp()), # Using current timestamp as a unique identifier
+                'DoctorID': doctor_id,
+                'AppointmentDate': date_time_str,
+                'Status': 'booked',
+                'Details': 'Appointment booked successfully'
+            }
+        )
+
+        return True
     except mysql.connector.Error as e:
         print("MySQL Error:", e)
         return False

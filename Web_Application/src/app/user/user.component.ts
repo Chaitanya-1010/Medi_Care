@@ -105,23 +105,97 @@ accObj = {
     console.log("from user c", this.appointmentDataObj)
   }
 
-
-
   appointmentForm = this.fb.group({
     date: [''],
     timmings: ['']
   })
-
   onSubmit() {
-    console.log(typeof (this.appointmentForm.value.timmings))
-    this.accObj.timmings = this.appointmentForm.value.timmings
-    this.accObj.date = this.appointmentForm.value.date
-    for (let v of this.appointmentDataObj) {
-      this.accObj.doctorname = v.name
-      this.accObj.consultationFee = v.consultationFee
+    if (this.appointmentForm.valid) {
+      const selectedDoctorId = this.selectedDoctor[0]?.doctor_id; // Assuming your doctor object has an 'id' property
+      const selectedTime = this.appointmentForm.value.timmings;
+      const date = this.appointmentForm.value.date;
+      
+      this.serviceObj.checkDoctorAvailability(selectedDoctorId, selectedTime, date).subscribe({
+        next: (response) => {
+          if (response.available) {
+            this.proceedWithBooking();
+          } else {
+            alert("Doctor is not available in that slot. Please book another slot.");
+          }
+        },
+        error: (err) => {
+          console.error("Error checking doctor availability: ", err);
+        }
+      });
+    } else {
+      console.log("Form is not valid");
     }
-    console.log("obj is", this.accObj);
   }
+  
+  // proceedWithBooking() {
+  //   this.accObj.timmings = this.appointmentForm.value.timmings
+  //   this.accObj.date = this.appointmentForm.value.date
+  //   for (let v of this.appointmentDataObj) {
+  //     this.accObj.doctorname = v.name
+  //     this.accObj.consultationFee = v.consultationFee
+  //   }
+  //   console.log("Proceeding with booking", this.accObj);
+  //   this.checkLogin(); 
+  // }
+
+
+  proceedWithBooking() {
+    // Assuming the necessary details are set from the form and selected doctor
+    if (this.userServiceObj.loginStatus === true) {
+      const appointmentDetails = {
+        patient_id:this.userServiceObj.userBehaviourSubject.value.patient_id,
+        doctor_id: this.selectedDoctor[0]?.doctor_id, // Adjust according to your doctor object structure
+        date: this.appointmentForm.value.date,
+        appointment_time: this.appointmentForm.value.timmings,
+        consultationFee: this.selectedDoctor[0]?.consultationFee
+      };
+  
+      // Now call the bookAppointment method with the gathered details
+      this.serviceObj.bookAppointment(appointmentDetails).subscribe({
+        next: (response) => {
+          // Handle the successful booking response
+          console.log('Appointment booked successfully', response);
+          this.accObj.timmings = this.appointmentForm.value.timmings
+          this.accObj.date = this.appointmentForm.value.date
+          for (let v of this.appointmentDataObj) {
+            this.accObj.doctorname = v.name
+            this.accObj.consultationFee = v.consultationFee
+          }
+          // For example, you might want to redirect the user to their dashboard
+          this.routerObj.navigateByUrl('/userdashboard/account');
+          // Or display a success message/alert
+          alert('Appointment booked successfully!');
+        },
+        error: (err) => {
+          // Handle any errors encountered during the booking
+          console.error('Error booking the appointment:', err);
+          // Show an error message to the user
+          alert('Failed to book the appointment. Please try again.');
+        }
+      });
+    } else {
+      // If the user is not logged in, redirect to the login page
+      this.routerObj.navigateByUrl("/login");
+    }
+  }
+  
+  
+  
+  // onSubmit() {
+  //   console.log(typeof (this.appointmentForm.value.timmings))
+  //   this.accObj.timmings = this.appointmentForm.value.timmings
+  //   this.accObj.date = this.appointmentForm.value.date
+  //   for (let v of this.appointmentDataObj) {
+  //     this.accObj.doctorname = v.name
+  //     this.accObj.consultationFee = v.consultationFee
+  //   }
+  //   console.log("obj is", this.accObj);
+  // }
 
 
   goToAccountPage() {

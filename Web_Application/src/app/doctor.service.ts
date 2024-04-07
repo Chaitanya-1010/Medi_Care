@@ -9,8 +9,8 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class DoctorService {
   loginStatus:boolean= false;
   constructor(private httpClientObj: HttpClient) { }
-  checkDoctorAvailability(doctorId: string, slot: string): Observable<any> {
-    return this.httpClientObj.post<any>('http://127.0.0.1:5000/check_doctor_availability', { doctorId, slot });
+  checkDoctorAvailability(doctor_id: string, slot: string, date : string): Observable<any> {
+    return this.httpClientObj.post<any>('http://127.0.0.1:5000/check_doctor_availability', { doctor_id, slot, date });
   }
 
   // Function to book appointment
