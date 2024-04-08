@@ -9,12 +9,11 @@ from pymongo import MongoClient
 from flask_mysqldb import MySQL
 from flask_sqlalchemy import SQLAlchemy
 import mysql.connector
+from AWS_deployment.Key.keys import *
 app = Flask(__name__)
 bcrypt = Bcrypt()
-
-# Initialize a DynamoDB client
-dynamodb = boto3.resource('dynamodb', region_name='us-east-2')
-appointment_history_table = dynamodb.Table('Appointment_History')
+# appointment_history_table=keys.dynamo_client.Table("Appointment_History")
+# patients_record_table=keys.dynamo_client.Table("Patients_Records")
 
 # Initialize MySQL connection
 conn = mysql.connector.connect(
@@ -111,7 +110,7 @@ def check_slot_availability(data):
         """
         con.execute(query, (doctor_id, date, slot_time))
         result = con.fetchone()
-        if result and result[0] == 'available':
+        if result and result[4] != 'available':
             return jsonify({'available': False})
         else:
             return jsonify({'available': True})
@@ -171,6 +170,7 @@ def book_appointment(payload):
         """
         cursor.execute(query, (patient_id, doctor_id, appointment_time))
         conn.commit()
+        appointment_id = cursor.lastrowid
 
         update_availability_query = """
             INSERT INTO doctor_availability (doctor_id, date, slot_time, status)
@@ -179,28 +179,28 @@ def book_appointment(payload):
         """
         cursor.execute(update_availability_query, (doctor_id, date, appointment_time))
         conn.commit()
-
+        appointment_time = appointment_time.isoformat()
         appointment_history_table.put_item(
             Item={
                 'PatientID': patient_id,
-                'AppointmentID': str(datetime.now().timestamp()), # Using current timestamp as a unique identifier
+                'AppointmentID': appointment_id, # Using current timestamp as a unique identifier
                 'DoctorID': doctor_id,
-                'AppointmentDate': date_time_str,
-                'Status': 'booked',
-                'Details': 'Appointment booked successfully'
+                'AppointmentDate': appointment_time,
+                'Status': 'booked'
             }
         )
-
         return True
-    except mysql.connector.Error as e:
-        print("MySQL Error:", e)
-        return False
+    # except mysql.connector.Error as e:
+    #     print("MySQL Error:", e)
+    #     return False
+    except Exception as e:
+        print(e)
 
-    finally:
-        if 'cursor' in locals():
-            cursor.close()
-        if 'conn' in locals():
-            conn.close()
+    # finally:
+    #     if 'cursor' in locals():
+    #         cursor.close()
+    #     if 'conn' in locals():
+    #         conn.close()
 
 def not_found(error):
     return jsonify({"message": f"Path {request.path} is not found"}), 404

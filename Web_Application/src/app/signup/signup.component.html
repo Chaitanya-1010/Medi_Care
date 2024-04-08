@@ -229,6 +229,47 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <!-- Blood Pressure -->
+                                <div class="col-md-6 mb-4 pb-2">
+                                    <label class="form-label" for="bp">Blood Pressure</label>
+                                    <input type="text" id="bp" class="form-control" formControlName="bp" />
+                                    <div *ngIf="bp.invalid && bp.dirty || bp.touched || ref.submitted">
+                                        <p *ngIf="bp.errors?.['required']" class="validation">*Blood Pressure is required</p>
+                                    </div>
+                                </div>
+                            
+                                <!-- Diabetes -->
+                                <div class="col-md-6 mb-4 pb-2">
+                                    <label class="form-label" for="diabetes">Diabetes</label>
+                                    <input type="text" id="diabetes" class="form-control" formControlName="diabetes" />
+                                    <div *ngIf="diabetes.invalid && diabetes.dirty || diabetes.touched || ref.submitted">
+                                        <p *ngIf="diabetes.errors?.['required']" class="validation">*Diabetes is required</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Height -->
+                                <div class="col-md-6 mb-4 pb-2">
+                                    <label class="form-label" for="height">Height</label>
+                                    <input type="text" id="height" class="form-control" formControlName="height" />
+                                    <div *ngIf="height.invalid && height.dirty || height.touched || ref.submitted">
+                                        <p *ngIf="height.errors?.['required']" class="validation">*Height is required</p>
+                                    </div>
+                                </div>
+                            
+                                <!-- Weight -->
+                                <div class="col-md-6 mb-4 pb-2">
+                                    <label class="form-label" for="weight">Weight</label>
+                                    <input type="text" id="weight" class="form-control" formControlName="weight" />
+                                    <div *ngIf="weight.invalid && weight.dirty || weight.touched || ref.submitted">
+                                        <p *ngIf="weight.errors?.['required']" class="validation">*Weight is required</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
                             <!-- submit-->
                             <div class="mt-4 pt-2 d-flex justify-content-center gap-3">
                                 <button type="submit" class="btn btn-primary w-25">Submit</button>

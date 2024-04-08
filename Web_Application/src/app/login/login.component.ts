@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
             this.userServiceObj.getUsername().next(res.user)
             this.userServiceObj.getUserType().next(res.user.userType)
             console.log("Logged in")
-            this.routerObj.navigateByUrl(`userdashboard`)
+            this.routerObj.navigateByUrl(`/userdashboard/account`)
             console.log("Dashboard On")
           }
           else{

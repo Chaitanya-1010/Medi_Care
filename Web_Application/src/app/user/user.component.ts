@@ -22,9 +22,9 @@ export class UserComponent implements OnInit {
 //all doctors data
 doctors: any[] = []
 //value from city select
-cityFromSelect: any;
+cityFromSelect: any = this.city[0];
 //value from specialisation select
-specFromSelect: any;
+specFromSelect: any=this.specialization[0];
 //doctors data based on book appointment button selection
 selectedDoctor: any[] = [];
 //appointment times,date data
@@ -132,18 +132,6 @@ accObj = {
     }
   }
   
-  // proceedWithBooking() {
-  //   this.accObj.timmings = this.appointmentForm.value.timmings
-  //   this.accObj.date = this.appointmentForm.value.date
-  //   for (let v of this.appointmentDataObj) {
-  //     this.accObj.doctorname = v.name
-  //     this.accObj.consultationFee = v.consultationFee
-  //   }
-  //   console.log("Proceeding with booking", this.accObj);
-  //   this.checkLogin(); 
-  // }
-
-
   proceedWithBooking() {
     // Assuming the necessary details are set from the form and selected doctor
     if (this.userServiceObj.loginStatus === true) {

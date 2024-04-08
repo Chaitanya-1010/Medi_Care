@@ -21,7 +21,11 @@ export class SignupComponent implements OnInit {
       email: ['', Validators.required],
       city: ['', Validators.required],
       password: ['', Validators.required],
-      phoneno: ['', Validators.required]
+      phoneno: ['', Validators.required],
+      bp: ['', Validators.required],
+      diabetes: ['', Validators.required],
+      height: ['', Validators.required],
+      weight: ['', Validators.required]
     })
 
 
@@ -65,4 +69,10 @@ export class SignupComponent implements OnInit {
   get city() {
     return this.userSignup.get("city")
   }
+
+  get bp() { return this.userSignup.get("bp"); }
+get diabetes() { return this.userSignup.get("diabetes"); }
+get height() { return this.userSignup.get("height"); }
+get weight() { return this.userSignup.get("weight"); }
+
 }

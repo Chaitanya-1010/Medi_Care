@@ -79,6 +79,15 @@ def respond_appointment():
     # Implement logic for doctor to respond to appointment requests
     pass
 
+@app.route('/upcoming_patient_appointments',methods=["POST"])
+def upcoming_patient_appointments():
+    data=request.json
+    return patient.upcoming_appointments(data)
+
+@app.route('/patient_appointments_history',methods=["POST"])
+def patient_appointments_history():
+    data=request.json
+    return patient.appointments_history(data)
 
 if __name__ == '__main__':
     app.run()

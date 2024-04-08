@@ -38,4 +38,12 @@ export class UserService {
    
     this.userBehaviourSubject.next(null)
   }
+
+  getUpcomingAppointments(): Observable<any> {
+    return this.httpClientObj.post('http://127.0.0.1:5000/upcoming_patient_appointments',this.userBehaviourSubject);
+  }
+
+  getAppointmentHistory(): Observable<any> {
+    return this.httpClientObj.post('http://127.0.0.1:5000/patient_appointments_history', this.userBehaviourSubject);
+  }
 }
