@@ -12,6 +12,10 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder='Backend/static', template_folder="Backend/templates")
 CORS(app) 
 
+@app.route('/')
+def home():
+    return render_template("index.html")
+
 # Login
 @app.route('/user_login', methods=['POST'])
 def userLogin():
