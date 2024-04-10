@@ -4,23 +4,10 @@ import jwt
 from Backend import models
 from pymongo import MongoClient
 import mysql.connector
-from AWS_deployment.Key.keys import *
+from Web_Application.AWS_deployment.Key.db_access import *
 from datetime import datetime
-# from Web_Application.AWS_deployment.Key.keys import *
 app = Flask(__name__)
 bcrypt = Bcrypt()
-# appointment_history_table=keys.dynamo_client.Table("Appointment_History")
-# patients_record_table=keys.dynamo_client.Table("Patients_Records")
-
-
-conn = mysql.connector.connect(
-    host="database-1.clesk2y2a9ma.us-east-2.rds.amazonaws.com",
-    user="admin",
-    password="admin123",
-    database="MEDICARE"
-)
-
-
 
 def create_user(new_user):
     # Check if the username already exists in the database

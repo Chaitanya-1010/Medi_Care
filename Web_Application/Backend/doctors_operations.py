@@ -5,23 +5,13 @@ from flask_bcrypt import Bcrypt
 import jwt
 from Backend import models
 # from models import doctor_schema as Doctor  # Import your Doctor model
-from pymongo import MongoClient
-from flask_mysqldb import MySQL
-from flask_sqlalchemy import SQLAlchemy
 import mysql.connector
-from AWS_deployment.Key.keys import *
+from Web_Application.AWS_deployment.Key.db_access import *
 app = Flask(__name__)
 bcrypt = Bcrypt()
 # appointment_history_table=keys.dynamo_client.Table("Appointment_History")
 # patients_record_table=keys.dynamo_client.Table("Patients_Records")
 
-# Initialize MySQL connection
-conn = mysql.connector.connect(
-    host="database-1.clesk2y2a9ma.us-east-2.rds.amazonaws.com",
-    user="admin",
-    password="admin123",
-    database="MEDICARE"
-)
 
 
 def create_doctor(new_doctor):
