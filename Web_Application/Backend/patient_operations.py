@@ -1,9 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
-import jwt
-from Backend import models
-from pymongo import MongoClient
-import mysql.connector
 from Web_Application.AWS_deployment.Key.db_access import *
 from datetime import datetime
 app = Flask(__name__)

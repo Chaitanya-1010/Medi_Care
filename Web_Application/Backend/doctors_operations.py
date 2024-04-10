@@ -2,17 +2,10 @@ import boto3
 from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
-import jwt
-from Backend import models
-# from models import doctor_schema as Doctor  # Import your Doctor model
 import mysql.connector
 from Web_Application.AWS_deployment.Key.db_access import *
 app = Flask(__name__)
 bcrypt = Bcrypt()
-# appointment_history_table=keys.dynamo_client.Table("Appointment_History")
-# patients_record_table=keys.dynamo_client.Table("Patients_Records")
-
-
 
 def create_doctor(new_doctor):
     # Extract fields from the new_doctor dictionary
@@ -32,9 +25,7 @@ def create_doctor(new_doctor):
     conn.commit()
     # Get the inserted doctor's ID
     new_doctor_id = cur.lastrowid
-    # Close the cursor
     cur.close()
-    # Return success message and inserted doctor record
     new_doctor["_id"] = new_doctor_id
     return jsonify({"message": "Doctor created", "payload": new_doctor}), 200
 
