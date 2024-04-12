@@ -1,9 +1,8 @@
-import boto3
 from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 import mysql.connector
-from Web_Application.AWS_deployment.Key.db_access import *
+from AWS_deployment.Key.db_access import *
 app = Flask(__name__)
 bcrypt = Bcrypt()
 
