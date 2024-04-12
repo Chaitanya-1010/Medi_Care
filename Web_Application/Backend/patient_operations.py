@@ -7,23 +7,24 @@ bcrypt = Bcrypt()
 
 def create_user(new_user):
     # Check if the username already exists in the database
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM patients WHERE username = %s", (new_user["username"],))
-    user = cursor.fetchone()
-    if user:
-        cursor.close()
-        return jsonify({"message": "Username already exists"}), 400
-    # Insert the new user record into the patients table
-    cursor.execute("INSERT INTO patients (username, password, email, city, phoneno, age, name) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                   (new_user["username"], new_user["password"], new_user["email"], new_user["city"], new_user["phoneno"], new_user["age"], new_user["name"]))
-    conn.commit()
-
-    # Get the inserted user's ID
-    new_user_id = cursor.lastrowid
-
-    # Close the cursor
-    cursor.close()
     try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM patients WHERE username = %s", (new_user["username"],))
+        user = cursor.fetchone()
+        if user:
+            cursor.close()
+            return jsonify({"message": "Username already exists"}), 400
+        # Insert the new user record into the patients table
+        cursor.execute("INSERT INTO patients (username, password, email, city, phoneno, age, name) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    (new_user["username"], new_user["password"], new_user["email"], new_user["city"], new_user["phoneno"], new_user["age"], new_user["name"]))
+        conn.commit()
+
+        # Get the inserted user's ID
+        new_user_id = cursor.lastrowid
+
+        # Close the cursor
+        cursor.close()
+    
         # Return success message and inserted user record
         new_user["_id"] = new_user_id
 
