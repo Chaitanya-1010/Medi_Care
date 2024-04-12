@@ -23,21 +23,24 @@ def create_user(new_user):
 
     # Close the cursor
     cursor.close()
+    try:
+        # Return success message and inserted user record
+        new_user["_id"] = new_user_id
 
-    # Return success message and inserted user record
-    new_user["_id"] = new_user_id
+        patient_record = {
+            "PatientID":str(new_user_id),
+            "username": new_user["username"],
+            "bp": new_user.get("bp", ""),
+            "diabetes": new_user.get("diabetes", ""),
+            "height": new_user.get("height", ""),
+            "weight": new_user.get("weight", ""),
+            "age": new_user.get("age", "")
+        }
+        patients_record_table.put_item(Item=patient_record)
+        return jsonify({"message": "User created", "payload": new_user}), 200
+    except Exception as e:
+        return jsonify({"message": e, "payload": ""}), 500
 
-    patient_record = {
-        "PatientID":str(new_user_id),
-        "username": new_user["username"],
-        "bp": new_user.get("bp", ""),
-        "diabetes": new_user.get("diabetes", ""),
-        "height": new_user.get("height", ""),
-        "weight": new_user.get("weight", ""),
-        "age": new_user.get("age", "")
-    }
-    patients_record_table.put_item(Item=patient_record)
-    return jsonify({"message": "User created", "payload": new_user}), 200
 
 
 def user_login(login_user):
