@@ -97,5 +97,40 @@ def patient_appointments_history():
     data=request.json
     return patient.appointments_history(data)
 
+@app.route('/doctor_schedule', methods=['POST'])
+def doctor_schedule_route():
+    doctor_id = request.json
+    # doctor_id = data.get('doctor_id')
+    if not doctor_id:
+        return jsonify({"error": "Doctor ID is required"}), 400
+    
+    schedule = doctor.fetch_doctor_schedule(doctor_id)
+    
+    return jsonify(schedule), 200
+
+@app.route('/doctor_awaiting_schedule', methods=['POST'])
+def doctor_schedule():
+    doctor_id = request.json
+    # doctor_id = data.get('doctor_id')
+    if not doctor_id:
+        return jsonify({"error": "Doctor ID is required"}), 400
+    
+    schedule = doctor.fetch_awaiting_doctor_schedule(doctor_id)
+    
+    return jsonify(schedule), 200
+
+@app.route('/appointment_review', methods=['POST'])
+def appointment_review_route():
+    data = request.json
+    appointment_id = data.get('appointmentId')
+    action = data.get('action')  # 'approve' or 'deny'
+    
+    if not appointment_id or not action:
+        return jsonify({"error": "Appointment ID and action are required"}), 400
+    
+    status_code, message = doctor.review_appointment_status(appointment_id, action)
+    
+    return jsonify({"message": message}), status_code
+
 if __name__ == '__main__':
     app.run()

@@ -57,12 +57,12 @@ def user_login(login_user):
     # Check if the user is not found
     if user is None:
         cursor.close()
-        return jsonify({"message": "User not found"}), 404
+        return jsonify({"message": "User not found"}), 200
 
     # Check if the password is invalid
     if user["password"] != password:
         cursor.close()
-        return jsonify({"message": "Invalid password"}), 401
+        return jsonify({"message": "Invalid password"}), 200
 
     # Close the cursor
     cursor.close()
@@ -90,9 +90,9 @@ def upcoming_appointments(data):
     try:
         cursor = conn.cursor(dictionary=True)
         current_date = datetime.now()
-        cursor.execute("SELECT a.appointment_time as appointmentTime, d.name AS doctorName, d.specialization as doctorSpecialization FROM appointments a\
+        cursor.execute("SELECT a.appointment_time as appointmentTime, d.name AS doctorName, d.specialization as doctorSpecialization , a.status as Status FROM appointments a\
             INNER JOIN doctors d ON a.doctor_id = d.doctor_id\
-            WHERE a.patient_id = %s AND a.appointment_time >= NOW()", (data["_value"]['patient_id'], ))
+            WHERE a.patient_id = %s AND a.appointment_time >= NOW() ", (data["_value"]['patient_id'], ))
         appointments = cursor.fetchall()
         cursor.close()
         for appointment in appointments:
