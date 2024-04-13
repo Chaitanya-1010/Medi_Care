@@ -1,16 +1,11 @@
 from flask import request, jsonify, Flask, send_file, render_template, send_from_directory
-# from app_routes import app
-# from app.patient_operations import * 
 import Backend.patient_operations as patient
 import Backend.doctors_operations as doctor
-# from app.doctors_operations import * 
 from Backend.login import *
 from flask_cors import CORS
-import http.client as httpClient
-import requests
 # Define API endpoints
 # app=Flask(__name__)
-app = Flask(__name__, static_folder='Backend/static', template_folder="Web_Application/dist/Medico")
+app = Flask(__name__, static_folder='Backend/static', template_folder="Backend/templates")
 CORS(app) 
 
 @app.route('/')
@@ -66,10 +61,6 @@ def book_appointment():
         return jsonify({'message': 'Failed to book appointment'}), 500
 
 # Doctor Operations
-@app.route('/doctor_appointments', methods=['GET'])
-def get_appointments():
-    # Implement logic to fetch appointments for the doctor
-    pass
 
 @app.route('/check_doctor_availability', methods=['POST'])
 def check_doctor_availability():
@@ -80,12 +71,6 @@ def check_doctor_availability():
 def update_appointment_status():
     data=request.json
     return doctor.update_appointment_status(data)
-
-
-@app.route('/doctor_respond_appointment', methods=['POST'])
-def respond_appointment():
-    # Implement logic for doctor to respond to appointment requests
-    pass
 
 @app.route('/upcoming_patient_appointments',methods=["POST"])
 def upcoming_patient_appointments():
