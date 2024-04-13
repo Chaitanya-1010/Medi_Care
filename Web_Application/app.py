@@ -1,4 +1,4 @@
-from flask import request, jsonify, Flask, send_file, render_template
+from flask import request, jsonify, Flask, send_file, render_template, send_from_directory
 # from app_routes import app
 # from app.patient_operations import * 
 import Backend.patient_operations as patient
@@ -6,15 +6,19 @@ import Backend.doctors_operations as doctor
 # from app.doctors_operations import * 
 from Backend.login import *
 from flask_cors import CORS
-
+import http.client as httpClient
+import requests
 # Define API endpoints
 # app=Flask(__name__)
-app = Flask(__name__, static_folder='Backend/static', template_folder="Backend/templates")
+app = Flask(__name__, static_folder='Backend/static', template_folder="Web_Application/dist/Medico")
 CORS(app) 
 
 @app.route('/')
 def home():
     return render_template("index.html")
+@app.route('/test')
+def test():
+    return "<h1>'test'<h1>"
 
 # Login
 @app.route('/user_login', methods=['POST'])

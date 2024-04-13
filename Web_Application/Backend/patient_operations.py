@@ -40,7 +40,7 @@ def create_user(new_user):
         patients_record_table.put_item(Item=patient_record)
         return jsonify({"message": "User created", "payload": new_user}), 200
     except Exception as e:
-        return jsonify({"message": e, "payload": ""}), 500
+        return jsonify({"message": e, "payload": ""}), 200
 
 
 
