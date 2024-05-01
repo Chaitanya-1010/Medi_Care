@@ -13,16 +13,16 @@ export class DoctorService {
   doctorData: any; 
   constructor(private httpClientObj: HttpClient) { }
   checkDoctorAvailability(doctor_id: string, slot: string, date : string): Observable<any> {
-    return this.httpClientObj.post<any>('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com/check_doctor_availability', { doctor_id, slot, date });
+    return this.httpClientObj.post<any>('http://ec2-18-189-180-8.us-east-2.compute.amazonaws.com/check_doctor_availability', { doctor_id, slot, date });
   }
 
   // Function to book appointment
   bookAppointment(appointmentDetails: any): Observable<any> {
-    return this.httpClientObj.post<any>('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com/book_appointment', appointmentDetails);
+    return this.httpClientObj.post<any>('http://ec2-18-189-180-8.us-east-2.compute.amazonaws.com/book_appointment', appointmentDetails);
   }
   loginDoctor(userObj: any): Observable<any> {
     // return this.httpClientObj.post('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com'+"/doctor_login", userObj);
-    return this.httpClientObj.post('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com' + "/doctor_login", userObj)
+    return this.httpClientObj.post('http://ec2-18-189-180-8.us-east-2.compute.amazonaws.com' + "/doctor_login", userObj)
     .pipe(
       tap((res: any) => {
         if (res.message === "login success") {
@@ -37,7 +37,7 @@ export class DoctorService {
     this.loginStatus = true;
   }
   addDoctorToDatabase(userObj: any): Observable<any> {
-    return this.httpClientObj.post('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com'+"/doctor_signup", userObj);
+    return this.httpClientObj.post('http://ec2-18-189-180-8.us-east-2.compute.amazonaws.com'+"/doctor_signup", userObj);
   }
   getLoggedInDoctor(){
     return this.doctorData;
@@ -61,7 +61,7 @@ export class DoctorService {
   }
   // getDoctorList
   getDoctorList(): Observable<any> {
-    return this.httpClientObj.get<any>('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com/get_doctors')
+    return this.httpClientObj.get<any>('http://ec2-18-189-180-8.us-east-2.compute.amazonaws.com/get_doctors')
   }
   getDoctorName(){
     return this.logoutdoctorBehaviourSubject;
@@ -71,19 +71,19 @@ export class DoctorService {
     this.logoutdoctorBehaviourSubject.next(null)
   }
   reviewAppointment(appointmentId: string, action: string): Observable<any> {
-    return this.httpClientObj.post<any>('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com/appointment_review', { appointmentId, action });
+    return this.httpClientObj.post<any>('http://ec2-18-189-180-8.us-east-2.compute.amazonaws.com/appointment_review', { appointmentId, action });
   }
   getpendingDoctorSchedule():Observable<any>{
-    return this.httpClientObj.post<any>('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com/doctor_awaiting_schedule', this.doctorData.doctor_id);
+    return this.httpClientObj.post<any>('http://ec2-18-189-180-8.us-east-2.compute.amazonaws.com/doctor_awaiting_schedule', {"doctorId":this.doctorData.doctor_id});
 
   }
   getDoctorSchedule(): Observable<any> {
     console.log(this.doctorData);
-    return this.httpClientObj.post<any>('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com/doctor_schedule', this.doctorData.doctor_id);
+    return this.httpClientObj.post<any>('http://ec2-18-189-180-8.us-east-2.compute.amazonaws.com/doctor_schedule', {"doctorId":this.doctorData.doctor_id});
   }
 
   // Function to get doctor appointments
   getDoctorAppointments(): Observable<any> {
-    return this.httpClientObj.get<any>('http://ec2-3-144-21-20.us-east-2.compute.amazonaws.com/doctor_appointments');
+    return this.httpClientObj.get<any>('http://ec2-18-189-180-8.us-east-2.compute.amazonaws.com/doctor_appointments');
   }
 }

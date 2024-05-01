@@ -3,8 +3,6 @@ import Backend.patient_operations as patient
 import Backend.doctors_operations as doctor
 from Backend.login import *
 from flask_cors import CORS
-# Define API endpoints
-# app=Flask(__name__)
 app = Flask(__name__, static_folder='Backend/static', template_folder="Backend/templates")
 CORS(app) 
 
@@ -84,8 +82,8 @@ def patient_appointments_history():
 
 @app.route('/doctor_schedule', methods=['POST'])
 def doctor_schedule_route():
-    doctor_id = request.json
-    # doctor_id = data.get('doctor_id')
+    data = request.json
+    doctor_id = data.get('doctorId')
     if not doctor_id:
         return jsonify({"error": "Doctor ID is required"}), 400
     
@@ -95,7 +93,8 @@ def doctor_schedule_route():
 
 @app.route('/doctor_awaiting_schedule', methods=['POST'])
 def doctor_schedule():
-    doctor_id = request.json
+    data = request.json
+    doctor_id = data.get('doctorId')
     # doctor_id = data.get('doctor_id')
     if not doctor_id:
         return jsonify({"error": "Doctor ID is required"}), 400
