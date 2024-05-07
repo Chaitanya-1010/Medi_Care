@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from AWS_deployment.Key.db_access import *
 from datetime import datetime
+import traceback
 app = Flask(__name__)
 bcrypt = Bcrypt()
 
@@ -125,55 +126,51 @@ def move_expired_appointments(patient_id):
     cursor.close()
 
 def appointments_history(data):
-    cursor = conn.cursor(dictionary=True)
-    doctor_info = {}
-    response = appointment_history_table.query(
-        KeyConditionExpression='PatientID = :pid',
-        ExpressionAttributeValues={
-            ':pid': data["_value"]['patient_id']
-        }
-    )
-    appointments = response['Items']
-    doctor_ids = [appointment['DoctorID'] for appointment in appointments]
-    query = "SELECT doctor_id, name, specialization FROM doctors WHERE doctor_id IN (%s)" % ','.join(['%s'] * len(doctor_ids))
-    cursor.execute(query, tuple(doctor_ids))
-    rows = cursor.fetchall()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        doctor_info = {}
+        response = appointment_history_table.query(
+            KeyConditionExpression='PatientID = :pid',
+            ExpressionAttributeValues={
+                ':pid': data["_value"]['patient_id']
+            }
+        )
+        appointments = response['Items']
+        doctor_ids = [appointment['DoctorID'] for appointment in appointments]
+        query = "SELECT doctor_id, name, specialization FROM doctors WHERE doctor_id IN (%s)" % ','.join(['%s'] * len(doctor_ids))
+        cursor.execute(query, tuple(doctor_ids))
+        rows = cursor.fetchall()
+            
+            # Populate doctor information dictionary
+        for row in rows:
+            doctor_info[row['doctor_id']] = {
+                'name': row['name'],
+                'specialization': row['specialization']
+            }
         
-        # Populate doctor information dictionary
-    for row in rows:
-        doctor_info[row['doctor_id']] = {
-            'name': row['name'],
-            'specialization': row['specialization']
-        }
-    
-    # Fetch all rows
-    rows = cursor.fetchall()
-    
-    # Populate doctor information dictionary
-    for row in rows:
-        doctor_info[row['doctor_id']] = {
-            'name': row['name'],
-            'specialization': row['specialization']
-        }
-    for appointment in appointments:
-        appointment['appointmentTime'] = appointment['AppointmentDate']
-        try:
-            appointment['AppointmentDate'] = datetime.strptime(appointment['AppointmentDate'], "%Y-%m-%d %H:%M:%S")
+        for appointment in appointments:
+            appointment['appointmentTime'] = appointment['AppointmentDate']
+            try:
+                appointment['AppointmentDate'] = datetime.strptime(appointment['AppointmentDate'], "%Y-%m-%d %H:%M:%S")
 
-            appointment['appointmentTime'] = appointment['AppointmentDate'].strftime('%H:%M:%S')
-            appointment['AppointmentDate'] = appointment['AppointmentDate'].strftime('%Y-%m-%d')
-        except:
-            pass
-        doctor_id = appointment['DoctorID']
-        if doctor_id in doctor_info:
-            appointment['doctorName'] = doctor_info[doctor_id]['name']
-            appointment['doctorSpecialization'] = doctor_info[doctor_id]['specialization']
-        else:
-            appointment['doctorName'] = 'Unknown'
-            appointment['doctorSpecialization'] = 'Unknown'
+                appointment['appointmentTime'] = appointment['AppointmentDate'].strftime('%H:%M:%S')
+                appointment['AppointmentDate'] = appointment['AppointmentDate'].strftime('%Y-%m-%d')
+            except:
+                pass
+            doctor_id = appointment['DoctorID']
+            if doctor_id in doctor_info:
+                appointment['doctorName'] = doctor_info[doctor_id]['name']
+                appointment['doctorSpecialization'] = doctor_info[doctor_id]['specialization']
+            else:
+                appointment['doctorName'] = 'Unknown'
+                appointment['doctorSpecialization'] = 'Unknown'
+            
         
-    
-    return appointments
+        return appointments
+    except Exception:
+        tb=traceback.format_exc()
+        return tb
+
 def not_found(error):
     return jsonify({"message": f"Path {request.path} is not found"}), 404
 
